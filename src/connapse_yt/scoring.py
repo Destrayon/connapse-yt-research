@@ -9,6 +9,9 @@ Weights (§5.3 of spec):
 Sum: 1.00
 """
 
+from dataclasses import dataclass, field
+from typing import Literal
+
 WEIGHTS = {
     "outlier_precedent": 0.25,
     "trend_slope": 0.15,
@@ -38,9 +41,6 @@ def composite_score(
             raise ValueError(f"{name} must be in [0, 1], got {value}")
     return sum(WEIGHTS[k] * v for k, v in axes.items())
 
-
-from dataclasses import dataclass, field
-from typing import Literal
 
 Pillar = Literal["P1", "P2", "P3"]
 Surface = Literal["hosted", "oss", "both"]
