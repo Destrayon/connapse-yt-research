@@ -12,16 +12,51 @@ The channel does not yet exist. Positioning is a first-class output of the agent
 
 **Business goal (v1):** drive **free-tier signups** at `https://www.connapse.com/` during the public-beta phase. Connapse is free with no subscription today; a paid tier is planned but a free tier will always exist. Every video idea is evaluated partly on how naturally it creates a path to "try Connapse free" as a CTA. Long-term goal is paid conversion, but v1 agent optimizes only for signup volume + signup quality (users in the target segment).
 
-**Promotion surfaces** (dual):
+**Promotion surfaces** (dual, with distinct capability sets — agent MUST respect these when framing hooks/CTAs):
 
-- **Hosted product** — `https://www.connapse.com/` — managed RAG / knowledge-container SaaS, free beta. Content angle: "managed RAG in 2 minutes", "replace X with Connapse", workflow demos. **Primary CTA path.**
-- **OSS repo** — `https://github.com/Destrayon/Connapse` (MIT-licensed, .NET 10, 11 MCP tools, REST + CLI + MCP surfaces, hybrid vector+keyword search, S3 / Azure Blob / local FS connectors, Docker 60-second deploy, Glama-listed). Companion CLI: `https://github.com/Destrayon/connapse-cli`. Content angle: "self-host your RAG", "contribute to an AI knowledge tool", architecture deep-dives, "60-second Docker deploy". **Secondary / top-of-funnel** — lower-intent traffic but builds credibility and attracts dev-segment signups who then use hosted.
+- **Hosted product (cloud)** — `https://www.connapse.com/` — managed RAG / knowledge-container SaaS, free beta. **Capabilities today:** managed containers with direct file upload (PDFs, markdown, text, etc. go straight into Connapse-managed storage — users absolutely can bring their own data in this way), hybrid search, MCP server access, OAuth. **Not available on cloud today:** BYO-storage *connectors* — cloud users cannot point Connapse at an existing S3 bucket, Azure Blob container, or a local filesystem path; those integrations exist only in OSS. Content angle: "managed RAG in 2 minutes", "drop your docs in, Claude reads them", "upload once, every AI session remembers", workflow demos. **Primary CTA path.**
+- **OSS repo** — `https://github.com/Destrayon/Connapse` (MIT-licensed, .NET 10, 11 MCP tools, REST + CLI + MCP surfaces, hybrid vector+keyword search, **S3 / Azure Blob / local FS connectors**, Docker 60-second deploy, Glama-listed). Companion CLI: `https://github.com/Destrayon/connapse-cli`. Content angle: "self-host your RAG", "point Connapse at your S3 bucket", "contribute to an AI knowledge tool", architecture deep-dives, "60-second Docker deploy". **Secondary / top-of-funnel** — lower-intent traffic but builds credibility and attracts dev-segment signups who then use hosted. Also the only surface that can honestly promise BYO-storage content today.
+
+**Capability-to-surface routing rule** (agent enforces):
+
+| Content promise                                       | Honest CTA surface            |
+|-------------------------------------------------------|-------------------------------|
+| "Upload PDFs / docs and search them"                  | Hosted ✓ (and OSS)            |
+| "Bring your data in — upload files to a container"    | Hosted ✓ (and OSS)            |
+| "Managed RAG in 2 minutes, no infra"                  | Hosted ✓                      |
+| "Hybrid vector + keyword search"                      | Both ✓                        |
+| "Persistent memory for Claude / your agent"           | Both ✓                        |
+| "Point at your existing S3 bucket"                    | **OSS only** (not cloud)      |
+| "Index your Azure Blob container"                     | **OSS only**                  |
+| "Index your local filesystem"                         | **OSS only**                  |
+| "Self-host, Docker, own your data"                    | OSS ✓                         |
+
+**Agent's mental model:** "bring your data in" = cloud-OK (direct upload). "bring your *storage* in" = OSS-only (BYO-connector).
+
+Any candidate whose hook requires a capability only in OSS but whose CTA routes to the hosted signup page is **rejected** by the agent as mis-promised. If the idea is good, it must be re-routed to an OSS-CTA variant (e.g., "Star the repo", "docker compose up") or reframed to a cloud-only capability.
 
 **Canonical tagline (from OSS README, lift verbatim for hooks):**
 > Stop losing context between AI sessions. Give your agents persistent, searchable memory.
 
 **Pain phrasing (from OSS README):**
 > Your AI agents forget everything between sessions.
+
+### 1.1 Positioning pillars (hook framework)
+
+Every video hook leads with **one** of the three pillars — never compounded in the first 10 seconds. Agent tags every candidate idea with the pillar it best fits; candidates that fit more than one are cloned into separate single-pillar variants.
+
+| # | Pillar | One-line hook seed | Pain it resolves | Content formats |
+|---|---|---|---|---|
+| P1 | **Persistent memory** | "Your AI agents forget everything between sessions." | Session amnesia; redoing the same setup; losing research across chats. | "I gave Claude a memory" demos; before/after workflow; multi-session build logs. |
+| P2 | **Context / token / cost optimization** | "Your CLAUDE.md is costing you money." | Bloated repo wikis / CLAUDE.md / docs dumps that burn tokens on every prompt. At enterprise scale this is real $. | "Cut your Claude bill 40%"; "CLAUDE.md vs. Connapse" A/B; "Why your monorepo is bankrupting your AI agents". |
+| P3 | **File search for agents** | (cloud) "Claude just learned to read your PDFs." / (OSS) "RAG over your S3 bucket in 60 seconds." | Agents that can't access your real documents. | **Cloud-compatible formats:** "Upload your docs, Claude searches them", "PDF Q&A in 2 min", "Replace ChatGPT file uploads with persistent Connapse". **OSS-only formats:** "Index your S3", "Index Azure Blob", "Index a local codebase". |
+
+**Rules the agent enforces:**
+
+1. Every `/daily/<date>/candidates.md` idea has a `pillar: P1 | P2 | P3` tag. Null is not allowed — if no pillar fits, the candidate is rejected as off-strategy.
+2. Every candidate carries a `cloud_compatible: true | false` tag. If `false`, the candidate's CTA is rewritten to route to the OSS repo (star, docker run, contribute) rather than the hosted signup. Mis-routed candidates are rejected.
+3. Wiki hook-pattern pages are organized by pillar: `/wiki/hooks/p1-persistent-memory/`, `/wiki/hooks/p2-context-optimization/`, `/wiki/hooks/p3-file-search/`. Each pillar accumulates its own hook-pattern corpus over time.
+4. A weekly pillar-balance check in the positioning pass: if one pillar has 3× the volume of another, flag for correction so the channel doesn't lopside.
 
 **Target audience (v1):** Claude Code users + agentic-AI developers and power users. This is the primary audience the channel will speak to; the corpus should weight signals from this segment.
 
@@ -65,11 +100,17 @@ The channel does not yet exist. Positioning is a first-class output of the agent
   transcripts/<video_id>.md          on-demand, only for outliers
 /wiki/                                LLM-compiled; versioned
   strategy/positioning-theses.vN.md   primary F-mode deliverable
+  strategy/pillar-balance.vN.md       weekly pillar-volume report
   audience/<persona>.vN.md            discovered personas, evolve
-  hooks/<pattern>.vN.md
+  hooks/
+    p1-persistent-memory/<pattern>.vN.md
+    p2-context-optimization/<pattern>.vN.md
+    p3-file-search/<pattern>.vN.md
+    cross-pillar-meta.vN.md           patterns common to all pillars
   competitors/<channel>-teardown.vN.md
   voice/connapse-brand-voice.vN.md
   topics/<niche>-landscape.vN.md
+  topics/connapse-oss-landscape.vN.md state of Destrayon/Connapse repo
   index.md                            TOC, regenerated each run
   log.md                              append-only run log
 /daily/
@@ -146,7 +187,10 @@ Content-type-aware, per RAG research:
    - `audience_fit` — LLM-judged fit to **Claude Code / agentic-dev** audience (v1 target segment)
    - `signup_pull` — LLM-judged likelihood the video produces a natural "try Connapse free" CTA, scoring how directly Connapse solves the pain/workflow shown. Distinguished from `audience_fit`: a video can match the audience (high audience_fit) without being a good signup driver (low signup_pull), e.g. a general "state of AI" recap.
    - Composite: `0.25·outlier + 0.15·trend + 0.20·pain + 0.15·audience + 0.25·signup_pull`
-   - Each candidate tagged `promotion_surface: hosted | oss | both` so downstream filtering can pick content type. Hosted-surface candidates with `signup_pull ≥ 0.7` are the primary v1 output.
+
+   **Required tags per candidate:**
+   - `pillar: P1 | P2 | P3` — which single positioning pillar the hook leads with (see §1.1). Null is not permitted; off-pillar candidates are rejected.
+   - `promotion_surface: hosted | oss | both` — hosted-surface candidates with `signup_pull ≥ 0.7` are the primary v1 output.
    - Rationale written alongside score, citing source paths.
 
 4. **Dedup vs. wiki** — for each candidate,
@@ -155,7 +199,9 @@ Content-type-aware, per RAG research:
 
 5. **Promote** — any candidate appearing in ≥3 daily runs within a 14-day window → new wiki page, or merge into an existing wiki page in an adjacent topic. Evidence links back to the originating daily folders.
 
-6. **Positioning pass** (weekly, Sunday) — read last 7 days of `/daily/*/summary.md` and all `/wiki/strategy/` pages. Produce a new `positioning-theses.vN+1.md` listing evidence-backed hypotheses ("audience X responds to format Y because Z"). Archive previous.
+6. **Positioning pass** (weekly, Sunday) — read last 7 days of `/daily/*/summary.md` and all `/wiki/strategy/` pages. Produce:
+   - A new `positioning-theses.vN+1.md` listing evidence-backed hypotheses ("audience X responds to format Y because Z").
+   - A new `pillar-balance.vN+1.md` reporting the week's candidate count per pillar (P1/P2/P3) and flagging imbalance (one pillar ≥3× any other). Archive previous versions.
 
 7. **Lint pass** (weekly) — orphan pages, stale claims, missing cross-refs, contradictions. Prune `/raw/` older than 30 days (re-fetchable). Archive `/daily/*/summary.md` older than 180 days.
 
