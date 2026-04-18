@@ -14,10 +14,14 @@ dependencies = [
   "python-frontmatter>=1.1",
   "pydantic>=2.6",
   "tenacity>=8.2",
+  "click>=8.1",
 ]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "pytest-httpx>=0.30", "responses>=0.25", "freezegun>=1.4"]
+
+[project.scripts]
+connapse-yt = "connapse_yt.cli:cli"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/connapse_yt"]
