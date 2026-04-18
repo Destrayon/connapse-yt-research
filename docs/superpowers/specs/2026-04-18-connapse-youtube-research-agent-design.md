@@ -10,6 +10,15 @@ Build a Claude Code Routine that runs daily, researches YouTube video ideas for 
 
 The channel does not yet exist. Positioning is a first-class output of the agent, not an input — the corpus doubles as an evidence base for deciding the channel's niche.
 
+**Business goal (v1):** drive **free-tier signups** at `https://www.connapse.com/` during the public-beta phase. Connapse is free with no subscription today; a paid tier is planned but a free tier will always exist. Every video idea is evaluated partly on how naturally it creates a path to "try Connapse free" as a CTA. Long-term goal is paid conversion, but v1 agent optimizes only for signup volume + signup quality (users in the target segment).
+
+**Promotion surfaces** (dual):
+
+- **Hosted product** — `https://www.connapse.com/` — managed RAG / knowledge-container SaaS, free beta. Content angle: "managed RAG in 2 minutes", "replace X with Connapse", workflow demos. **Primary CTA path.**
+- **OSS repo** — public GitHub repository. Content angle: "self-host your RAG", "contribute to an AI knowledge tool", architecture deep-dives. **Secondary / top-of-funnel** — lower-intent traffic but builds credibility and attracts dev-segment signups who then use hosted.
+
+**Target audience (v1):** Claude Code users + agentic-AI developers and power users. This is the primary audience the channel will speak to; the corpus should weight signals from this segment.
+
 ## 2. Goals & non-goals
 
 **Goals**
@@ -101,19 +110,37 @@ Content-type-aware, per RAG research:
 
 1. **Pull** (free tier only at v1)
    - YouTube Data API v3 — 10k units/day. Budget: ≤3 `search.list` calls (300u), ~20 `videos.list` calls (20u), ~5 `channels.list` (5u), `commentThreads` cheap. Keep under 500u/day.
-   - Reddit — OAuth, non-commercial, 100 req/min, 10k req/month. Targets: `r/LocalLLaMA`, `r/ClaudeAI`, `r/ChatGPTPro`, `r/SideProject`, `r/LangChain`, `r/MachineLearning` (configurable).
+     - **Seed channel list** (cold start, agent refines after week 1 via Reddit/HN mentions and YT recommended-channel graph):
+       - AI Jason (agentic workflows, LangChain/Claude)
+       - IndyDevDan (Claude Code power-user content)
+       - Cole Medin (agent builders, n8n + LLMs)
+       - David Ondrej (Claude Code tutorials, no-code AI)
+       - All About AI (agentic experiments, tool walkthroughs)
+       - Matthew Berman (LLM/agent news + demos)
+       - Sam Witteveen (LangChain/LangGraph deep-dives)
+       - Matt Williams (ex-Ollama, local + agentic)
+       - Mervin Praison (agent tutorials, MCP content)
+       - AI Search (tool comparisons)
+       - Anthropic (official, for model/product news baselines)
+       - Fireship (general AI news pulse; engagement benchmark)
+   - Reddit — OAuth, non-commercial, 100 req/min, 10k req/month. Targets (Claude-Code-and-agentic-focused):
+     `r/ClaudeAI`, `r/ClaudeCode`, `r/AI_Agents`, `r/LLMDevs`, `r/LangChain`,
+     `r/LocalLLaMA`, `r/AgentDevelopmentKit`, `r/mcp`, `r/cursor` (adjacent tooling),
+     `r/SideProject` (indie-dev discovery). Configurable; pruned/expanded based on signal density after week 4.
    - Hacker News — Firebase JSON API, no auth, free.
    - Google Trends — `pytrends`, conservative pacing (60s spacing if rate-limited).
    - Raw JSON written to `/raw/<source>/<date>/`.
 
 2. **Extract** — LLM distills each raw artifact into observations: title patterns, pain points, emerging keywords, competitor moves, outlier videos (≥10x channel avg views).
 
-3. **Score** candidates on 4 axes, each 0-1:
+3. **Score** candidates on 5 axes, each 0-1:
    - `outlier_precedent` — views vs. channel baseline (YT data)
    - `trend_slope` — pytrends rise + cross-platform mention velocity
    - `pain_density` — count of distinct Reddit/HN threads voicing the problem
-   - `connapse_fit` — LLM-judged fit to Connapse's value prop (RAG / knowledge / research / second-brain)
-   - Composite: `0.35·outlier + 0.25·trend + 0.25·pain + 0.15·fit`
+   - `audience_fit` — LLM-judged fit to **Claude Code / agentic-dev** audience (v1 target segment)
+   - `signup_pull` — LLM-judged likelihood the video produces a natural "try Connapse free" CTA, scoring how directly Connapse solves the pain/workflow shown. Distinguished from `audience_fit`: a video can match the audience (high audience_fit) without being a good signup driver (low signup_pull), e.g. a general "state of AI" recap.
+   - Composite: `0.25·outlier + 0.15·trend + 0.20·pain + 0.15·audience + 0.25·signup_pull`
+   - Each candidate tagged `promotion_surface: hosted | oss | both` so downstream filtering can pick content type. Hosted-surface candidates with `signup_pull ≥ 0.7` are the primary v1 output.
    - Rationale written alongside score, citing source paths.
 
 4. **Dedup vs. wiki** — for each candidate,
@@ -233,11 +260,19 @@ Default composite: k=8 from wiki, k=4 from `/daily/last-7`, client-side rerank.
 
 ## 13. Open questions (resolve before implementation plan)
 
-- **YT channel seed list** — niche-specific channels to monitor baseline on. Agent can discover these in early runs, but a seed list accelerates cold-start. User to provide ~10 candidates, or agent synthesizes from Reddit/HN mentions during week 1.
-- **Reddit sub list** — confirm/revise the default list in Section 5.
-- **Local time zone** — confirmed America/Chicago? (Adjust 07:00 trigger.)
-- **GitHub repo location** — user's GitHub org or personal? Private.
-- **Container naming** — `connapse-youtube-research` OK, or prefer another?
+**Resolved:**
+
+- ~~YT channel seed list~~ — seeded in §5 with Claude-Code / agentic-dev-focused channels. Agent refines after week 1.
+- ~~Reddit sub list~~ — defaults in §5, Claude-Code / agentic-focused.
+- ~~Business goal~~ — free-tier signups at connapse.com (see §1).
+- ~~Target audience~~ — Claude Code users + agentic-dev power users.
+
+**Still open:**
+
+- **Local time zone** for the 07:00 daily trigger — default America/Chicago unless user specifies otherwise.
+- **GitHub repo location** for the routine code — user's personal GitHub account vs. a Connapse org. Private visibility.
+- **Container naming** — `connapse-youtube-research` proposed, or does user prefer another convention matching existing Connapse container names?
+- **Connapse OSS repo URL** — need the actual GitHub URL to seed a `/wiki/topics/connapse-oss-landscape.md` page and to let the agent cite issues/PRs as content fodder.
 
 ## 14. Out of scope for v1 (explicit deferrals)
 
