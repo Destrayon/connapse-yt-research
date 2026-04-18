@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "connapse": {
+      "type": "http",
+      "url": "https://www.connapse.com/khastra/mcp"
+    }
+  }
+}

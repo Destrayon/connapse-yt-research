@@ -10,6 +10,56 @@ Build a Claude Code Routine that runs daily, researches YouTube video ideas for 
 
 The channel does not yet exist. Positioning is a first-class output of the agent, not an input — the corpus doubles as an evidence base for deciding the channel's niche.
 
+**Business goal (v1):** drive **free-tier signups** at `https://www.connapse.com/` during the public-beta phase. Connapse is free with no subscription today; a paid tier is planned but a free tier will always exist. Every video idea is evaluated partly on how naturally it creates a path to "try Connapse free" as a CTA. Long-term goal is paid conversion, but v1 agent optimizes only for signup volume + signup quality (users in the target segment).
+
+**Promotion surfaces** (dual, with distinct capability sets — agent MUST respect these when framing hooks/CTAs):
+
+- **Hosted product (cloud)** — `https://www.connapse.com/` — managed RAG / knowledge-container SaaS, free beta. **Capabilities today:** managed containers with direct file upload (PDFs, markdown, text, etc. go straight into Connapse-managed storage — users absolutely can bring their own data in this way), hybrid search, MCP server access, OAuth. **Not available on cloud today:** BYO-storage *connectors* — cloud users cannot point Connapse at an existing S3 bucket, Azure Blob container, or a local filesystem path; those integrations exist only in OSS. Content angle: "managed RAG in 2 minutes", "drop your docs in, Claude reads them", "upload once, every AI session remembers", workflow demos. **Primary CTA path.**
+- **OSS repo** — `https://github.com/Destrayon/Connapse` (MIT-licensed, .NET 10, 11 MCP tools, REST + CLI + MCP surfaces, hybrid vector+keyword search, **S3 / Azure Blob / local FS connectors**, Docker 60-second deploy, Glama-listed). Companion CLI: `https://github.com/Destrayon/connapse-cli`. Content angle: "self-host your RAG", "point Connapse at your S3 bucket", "contribute to an AI knowledge tool", architecture deep-dives, "60-second Docker deploy". **Secondary / top-of-funnel** — lower-intent traffic but builds credibility and attracts dev-segment signups who then use hosted. Also the only surface that can honestly promise BYO-storage content today.
+
+**Capability-to-surface routing rule** (agent enforces):
+
+| Content promise                                       | Honest CTA surface            |
+|-------------------------------------------------------|-------------------------------|
+| "Upload PDFs / docs and search them"                  | Hosted ✓ (and OSS)            |
+| "Bring your data in — upload files to a container"    | Hosted ✓ (and OSS)            |
+| "Managed RAG in 2 minutes, no infra"                  | Hosted ✓                      |
+| "Hybrid vector + keyword search"                      | Both ✓                        |
+| "Persistent memory for Claude / your agent"           | Both ✓                        |
+| "Point at your existing S3 bucket"                    | **OSS only** (not cloud)      |
+| "Index your Azure Blob container"                     | **OSS only**                  |
+| "Index your local filesystem"                         | **OSS only**                  |
+| "Self-host, Docker, own your data"                    | OSS ✓                         |
+
+**Agent's mental model:** "bring your data in" = cloud-OK (direct upload). "bring your *storage* in" = OSS-only (BYO-connector).
+
+Any candidate whose hook requires a capability only in OSS but whose CTA routes to the hosted signup page is **rejected** by the agent as mis-promised. If the idea is good, it must be re-routed to an OSS-CTA variant (e.g., "Star the repo", "docker compose up") or reframed to a cloud-only capability.
+
+**Canonical tagline (from OSS README, lift verbatim for hooks):**
+> Stop losing context between AI sessions. Give your agents persistent, searchable memory.
+
+**Pain phrasing (from OSS README):**
+> Your AI agents forget everything between sessions.
+
+### 1.1 Positioning pillars (hook framework)
+
+Every video hook leads with **one** of the three pillars — never compounded in the first 10 seconds. Agent tags every candidate idea with the pillar it best fits; candidates that fit more than one are cloned into separate single-pillar variants.
+
+| # | Pillar | One-line hook seed | Pain it resolves | Content formats |
+|---|---|---|---|---|
+| P1 | **Persistent memory** | "Your AI agents forget everything between sessions." | Session amnesia; redoing the same setup; losing research across chats. | "I gave Claude a memory" demos; before/after workflow; multi-session build logs. |
+| P2 | **Context / token / cost optimization** | "Your CLAUDE.md is costing you money." | Bloated repo wikis / CLAUDE.md / docs dumps that burn tokens on every prompt. At enterprise scale this is real $. | "Cut your Claude bill 40%"; "CLAUDE.md vs. Connapse" A/B; "Why your monorepo is bankrupting your AI agents". |
+| P3 | **File search for agents** | (cloud) "Claude just learned to read your PDFs." / (OSS) "RAG over your S3 bucket in 60 seconds." | Agents that can't access your real documents. | **Cloud-compatible formats:** "Upload your docs, Claude searches them", "PDF Q&A in 2 min", "Replace ChatGPT file uploads with persistent Connapse". **OSS-only formats:** "Index your S3", "Index Azure Blob", "Index a local codebase". |
+
+**Rules the agent enforces:**
+
+1. Every `/daily/<date>/candidates.md` idea has a `pillar: P1 | P2 | P3` tag. Null is not allowed — if no pillar fits, the candidate is rejected as off-strategy.
+2. Every candidate carries a `cloud_compatible: true | false` tag. If `false`, the candidate's CTA is rewritten to route to the OSS repo (star, docker run, contribute) rather than the hosted signup. Mis-routed candidates are rejected.
+3. Wiki hook-pattern pages are organized by pillar: `/wiki/hooks/p1-persistent-memory/`, `/wiki/hooks/p2-context-optimization/`, `/wiki/hooks/p3-file-search/`. Each pillar accumulates its own hook-pattern corpus over time.
+4. A weekly pillar-balance check in the positioning pass: if one pillar has 3× the volume of another, flag for correction so the channel doesn't lopside.
+
+**Target audience (v1):** Claude Code users + agentic-AI developers and power users. This is the primary audience the channel will speak to; the corpus should weight signals from this segment.
+
 ## 2. Goals & non-goals
 
 **Goals**
@@ -50,11 +100,17 @@ The channel does not yet exist. Positioning is a first-class output of the agent
   transcripts/<video_id>.md          on-demand, only for outliers
 /wiki/                                LLM-compiled; versioned
   strategy/positioning-theses.vN.md   primary F-mode deliverable
+  strategy/pillar-balance.vN.md       weekly pillar-volume report
   audience/<persona>.vN.md            discovered personas, evolve
-  hooks/<pattern>.vN.md
+  hooks/
+    p1-persistent-memory/<pattern>.vN.md
+    p2-context-optimization/<pattern>.vN.md
+    p3-file-search/<pattern>.vN.md
+    cross-pillar-meta.vN.md           patterns common to all pillars
   competitors/<channel>-teardown.vN.md
   voice/connapse-brand-voice.vN.md
   topics/<niche>-landscape.vN.md
+  topics/connapse-oss-landscape.vN.md state of Destrayon/Connapse repo
   index.md                            TOC, regenerated each run
   log.md                              append-only run log
 /daily/
@@ -101,19 +157,40 @@ Content-type-aware, per RAG research:
 
 1. **Pull** (free tier only at v1)
    - YouTube Data API v3 — 10k units/day. Budget: ≤3 `search.list` calls (300u), ~20 `videos.list` calls (20u), ~5 `channels.list` (5u), `commentThreads` cheap. Keep under 500u/day.
-   - Reddit — OAuth, non-commercial, 100 req/min, 10k req/month. Targets: `r/LocalLLaMA`, `r/ClaudeAI`, `r/ChatGPTPro`, `r/SideProject`, `r/LangChain`, `r/MachineLearning` (configurable).
+     - **Seed channel list** (cold start, agent refines after week 1 via Reddit/HN mentions and YT recommended-channel graph):
+       - AI Jason (agentic workflows, LangChain/Claude)
+       - IndyDevDan (Claude Code power-user content)
+       - Cole Medin (agent builders, n8n + LLMs)
+       - David Ondrej (Claude Code tutorials, no-code AI)
+       - All About AI (agentic experiments, tool walkthroughs)
+       - Matthew Berman (LLM/agent news + demos)
+       - Sam Witteveen (LangChain/LangGraph deep-dives)
+       - Matt Williams (ex-Ollama, local + agentic)
+       - Mervin Praison (agent tutorials, MCP content)
+       - AI Search (tool comparisons)
+       - Anthropic (official, for model/product news baselines)
+       - Fireship (general AI news pulse; engagement benchmark)
+   - Reddit — OAuth, non-commercial, 100 req/min, 10k req/month. Targets (Claude-Code-and-agentic-focused):
+     `r/ClaudeAI`, `r/ClaudeCode`, `r/AI_Agents`, `r/LLMDevs`, `r/LangChain`,
+     `r/LocalLLaMA`, `r/AgentDevelopmentKit`, `r/mcp`, `r/cursor` (adjacent tooling),
+     `r/SideProject` (indie-dev discovery). Configurable; pruned/expanded based on signal density after week 4.
    - Hacker News — Firebase JSON API, no auth, free.
    - Google Trends — `pytrends`, conservative pacing (60s spacing if rate-limited).
    - Raw JSON written to `/raw/<source>/<date>/`.
 
 2. **Extract** — LLM distills each raw artifact into observations: title patterns, pain points, emerging keywords, competitor moves, outlier videos (≥10x channel avg views).
 
-3. **Score** candidates on 4 axes, each 0-1:
+3. **Score** candidates on 5 axes, each 0-1:
    - `outlier_precedent` — views vs. channel baseline (YT data)
    - `trend_slope` — pytrends rise + cross-platform mention velocity
    - `pain_density` — count of distinct Reddit/HN threads voicing the problem
-   - `connapse_fit` — LLM-judged fit to Connapse's value prop (RAG / knowledge / research / second-brain)
-   - Composite: `0.35·outlier + 0.25·trend + 0.25·pain + 0.15·fit`
+   - `audience_fit` — LLM-judged fit to **Claude Code / agentic-dev** audience (v1 target segment)
+   - `signup_pull` — LLM-judged likelihood the video produces a natural "try Connapse free" CTA, scoring how directly Connapse solves the pain/workflow shown. Distinguished from `audience_fit`: a video can match the audience (high audience_fit) without being a good signup driver (low signup_pull), e.g. a general "state of AI" recap.
+   - Composite: `0.25·outlier + 0.15·trend + 0.20·pain + 0.15·audience + 0.25·signup_pull`
+
+   **Required tags per candidate:**
+   - `pillar: P1 | P2 | P3` — which single positioning pillar the hook leads with (see §1.1). Null is not permitted; off-pillar candidates are rejected.
+   - `promotion_surface: hosted | oss | both` — hosted-surface candidates with `signup_pull ≥ 0.7` are the primary v1 output.
    - Rationale written alongside score, citing source paths.
 
 4. **Dedup vs. wiki** — for each candidate,
@@ -122,7 +199,9 @@ Content-type-aware, per RAG research:
 
 5. **Promote** — any candidate appearing in ≥3 daily runs within a 14-day window → new wiki page, or merge into an existing wiki page in an adjacent topic. Evidence links back to the originating daily folders.
 
-6. **Positioning pass** (weekly, Sunday) — read last 7 days of `/daily/*/summary.md` and all `/wiki/strategy/` pages. Produce a new `positioning-theses.vN+1.md` listing evidence-backed hypotheses ("audience X responds to format Y because Z"). Archive previous.
+6. **Positioning pass** (weekly, Sunday) — read last 7 days of `/daily/*/summary.md` and all `/wiki/strategy/` pages. Produce:
+   - A new `positioning-theses.vN+1.md` listing evidence-backed hypotheses ("audience X responds to format Y because Z").
+   - A new `pillar-balance.vN+1.md` reporting the week's candidate count per pillar (P1/P2/P3) and flagging imbalance (one pillar ≥3× any other). Archive previous versions.
 
 7. **Lint pass** (weekly) — orphan pages, stale claims, missing cross-refs, contradictions. Prune `/raw/` older than 30 days (re-fetchable). Archive `/daily/*/summary.md` older than 180 days.
 
@@ -233,11 +312,18 @@ Default composite: k=8 from wiki, k=4 from `/daily/last-7`, client-side rerank.
 
 ## 13. Open questions (resolve before implementation plan)
 
-- **YT channel seed list** — niche-specific channels to monitor baseline on. Agent can discover these in early runs, but a seed list accelerates cold-start. User to provide ~10 candidates, or agent synthesizes from Reddit/HN mentions during week 1.
-- **Reddit sub list** — confirm/revise the default list in Section 5.
-- **Local time zone** — confirmed America/Chicago? (Adjust 07:00 trigger.)
-- **GitHub repo location** — user's GitHub org or personal? Private.
-- **Container naming** — `connapse-youtube-research` OK, or prefer another?
+**All resolved:**
+
+- YT channel seed list — seeded in §5 with Claude-Code / agentic-dev-focused channels. Agent refines after week 1.
+- Reddit sub list — defaults in §5, Claude-Code / agentic-focused.
+- Business goal — free-tier signups at connapse.com (see §1).
+- Target audience — Claude Code users + agentic-dev power users.
+- Timezone — America/Chicago, 07:00 daily trigger.
+- Container name — `connapse-youtube-research`.
+- Connapse OSS repo URL — `https://github.com/Destrayon/Connapse` (confirmed via `gh search repos`). Companion: `Destrayon/connapse-cli`.
+- Routine-code repo location — user's personal GitHub account, private. (Default — easily relocatable later if a Connapse org forms.)
+
+During implementation, the agent should also seed `/wiki/topics/connapse-oss-landscape.md` with the OSS repo's current state (open issues count, latest release, star growth trend) as week-1 cold-start content, and track mentions of `Destrayon/Connapse` across Reddit/HN/YT comments as an extra signal source.
 
 ## 14. Out of scope for v1 (explicit deferrals)
 

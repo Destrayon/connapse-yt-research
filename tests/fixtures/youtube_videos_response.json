@@ -1,0 +1,17 @@
+{
+  "kind": "youtube#videoListResponse",
+  "items": [
+    {
+      "id": "vid001",
+      "snippet": {"channelId": "UC_AIJ", "title": "I gave Claude persistent memory"},
+      "statistics": {"viewCount": "184250", "likeCount": "9312", "commentCount": "521"},
+      "contentDetails": {"duration": "PT14M32S"}
+    },
+    {
+      "id": "vid002",
+      "snippet": {"channelId": "UC_IDD", "title": "Your CLAUDE.md is costing you money"},
+      "statistics": {"viewCount": "98117", "likeCount": "5480", "commentCount": "312"},
+      "contentDetails": {"duration": "PT9M02S"}
+    }
+  ]
+}

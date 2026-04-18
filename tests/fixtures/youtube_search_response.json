@@ -1,0 +1,31 @@
+{
+  "kind": "youtube#searchListResponse",
+  "etag": "abc",
+  "items": [
+    {
+      "kind": "youtube#searchResult",
+      "id": {"kind": "youtube#video", "videoId": "vid001"},
+      "snippet": {
+        "channelId": "UC_AIJ",
+        "title": "I gave Claude persistent memory and it changed everything",
+        "description": "Walkthrough of an MCP-backed memory system for agents.",
+        "channelTitle": "AI Jason",
+        "publishedAt": "2026-04-15T12:00:00Z",
+        "thumbnails": {"default": {"url": "https://i.ytimg.com/vi/vid001/default.jpg"}}
+      }
+    },
+    {
+      "kind": "youtube#searchResult",
+      "id": {"kind": "youtube#video", "videoId": "vid002"},
+      "snippet": {
+        "channelId": "UC_IDD",
+        "title": "Your CLAUDE.md is costing you money",
+        "description": "Why bloated repo wikis burn Claude tokens and how to fix it.",
+        "channelTitle": "IndyDevDan",
+        "publishedAt": "2026-04-14T08:00:00Z",
+        "thumbnails": {"default": {"url": "https://i.ytimg.com/vi/vid002/default.jpg"}}
+      }
+    }
+  ],
+  "pageInfo": {"totalResults": 2, "resultsPerPage": 50}
+}
