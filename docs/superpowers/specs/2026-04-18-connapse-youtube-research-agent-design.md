@@ -15,7 +15,13 @@ The channel does not yet exist. Positioning is a first-class output of the agent
 **Promotion surfaces** (dual):
 
 - **Hosted product** — `https://www.connapse.com/` — managed RAG / knowledge-container SaaS, free beta. Content angle: "managed RAG in 2 minutes", "replace X with Connapse", workflow demos. **Primary CTA path.**
-- **OSS repo** — public GitHub repository. Content angle: "self-host your RAG", "contribute to an AI knowledge tool", architecture deep-dives. **Secondary / top-of-funnel** — lower-intent traffic but builds credibility and attracts dev-segment signups who then use hosted.
+- **OSS repo** — `https://github.com/Destrayon/Connapse` (MIT-licensed, .NET 10, 11 MCP tools, REST + CLI + MCP surfaces, hybrid vector+keyword search, S3 / Azure Blob / local FS connectors, Docker 60-second deploy, Glama-listed). Companion CLI: `https://github.com/Destrayon/connapse-cli`. Content angle: "self-host your RAG", "contribute to an AI knowledge tool", architecture deep-dives, "60-second Docker deploy". **Secondary / top-of-funnel** — lower-intent traffic but builds credibility and attracts dev-segment signups who then use hosted.
+
+**Canonical tagline (from OSS README, lift verbatim for hooks):**
+> Stop losing context between AI sessions. Give your agents persistent, searchable memory.
+
+**Pain phrasing (from OSS README):**
+> Your AI agents forget everything between sessions.
 
 **Target audience (v1):** Claude Code users + agentic-AI developers and power users. This is the primary audience the channel will speak to; the corpus should weight signals from this segment.
 
@@ -260,19 +266,18 @@ Default composite: k=8 from wiki, k=4 from `/daily/last-7`, client-side rerank.
 
 ## 13. Open questions (resolve before implementation plan)
 
-**Resolved:**
+**All resolved:**
 
-- ~~YT channel seed list~~ — seeded in §5 with Claude-Code / agentic-dev-focused channels. Agent refines after week 1.
-- ~~Reddit sub list~~ — defaults in §5, Claude-Code / agentic-focused.
-- ~~Business goal~~ — free-tier signups at connapse.com (see §1).
-- ~~Target audience~~ — Claude Code users + agentic-dev power users.
+- YT channel seed list — seeded in §5 with Claude-Code / agentic-dev-focused channels. Agent refines after week 1.
+- Reddit sub list — defaults in §5, Claude-Code / agentic-focused.
+- Business goal — free-tier signups at connapse.com (see §1).
+- Target audience — Claude Code users + agentic-dev power users.
+- Timezone — America/Chicago, 07:00 daily trigger.
+- Container name — `connapse-youtube-research`.
+- Connapse OSS repo URL — `https://github.com/Destrayon/Connapse` (confirmed via `gh search repos`). Companion: `Destrayon/connapse-cli`.
+- Routine-code repo location — user's personal GitHub account, private. (Default — easily relocatable later if a Connapse org forms.)
 
-**Still open:**
-
-- **Local time zone** for the 07:00 daily trigger — default America/Chicago unless user specifies otherwise.
-- **GitHub repo location** for the routine code — user's personal GitHub account vs. a Connapse org. Private visibility.
-- **Container naming** — `connapse-youtube-research` proposed, or does user prefer another convention matching existing Connapse container names?
-- **Connapse OSS repo URL** — need the actual GitHub URL to seed a `/wiki/topics/connapse-oss-landscape.md` page and to let the agent cite issues/PRs as content fodder.
+During implementation, the agent should also seed `/wiki/topics/connapse-oss-landscape.md` with the OSS repo's current state (open issues count, latest release, star growth trend) as week-1 cold-start content, and track mentions of `Destrayon/Connapse` across Reddit/HN/YT comments as an extra signal source.
 
 ## 14. Out of scope for v1 (explicit deferrals)
 
