@@ -10,3 +10,5 @@ build/
 htmlcov/
 /raw_local/
 /daily_local/
+# Local video-brief output — personal planning artifacts, not corpus content.
+/briefs/
