@@ -25,11 +25,12 @@ python -m connapse_yt.pull.youtube_cli \
   --out /tmp/run/$RUN_DATE/youtube.json
 
 python -m connapse_yt.pull.reddit_cli \
-  --client-id "$REDDIT_CLIENT_ID" --client-secret "$REDDIT_CLIENT_SECRET" \
-  --user-agent "$REDDIT_USER_AGENT" \
   --sub ClaudeAI --sub ClaudeCode --sub AI_Agents --sub LLMDevs \
   --sub LangChain --sub LocalLLaMA --sub mcp --sub cursor --sub SideProject \
+  --time-filter day --limit 25 \
   --out /tmp/run/$RUN_DATE/reddit.json
+# Uses old.reddit.com public JSON; no auth. Optionally set REDDIT_USER_AGENT
+# to identify this deployment (falls back to a generic project UA).
 
 python -m connapse_yt.pull.hn_cli \
   --out /tmp/run/$RUN_DATE/hn.json
