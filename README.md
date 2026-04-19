@@ -19,6 +19,8 @@ pytest
 
 **Weekly routine:** runs Sundays at 08:00 CT. Runs positioning-synthesis then wiki-lint.
 
+**On-demand video brief:** manual trigger. Prompt the routine with `"brief me on C2"` (or `"brief today's top pick"`, `"brief this week's top P3 candidate"`, free-text topic) to invoke the `video-brief` skill. Output lands at `/briefs/<date>/<candidate_id>.html` — a single self-contained HTML page with hook, evidence, reference videos, pain vocabulary, brand voice, positioning frame, and a script-outline scaffold. Open in a browser while filming.
+
 ### How to query the corpus from another agent
 
 Point your downstream query agent at the same Connapse MCP. The canonical retrieval patterns (§9 of the spec):
