@@ -19,7 +19,23 @@ pytest
 
 **Weekly routine:** runs Sundays at 08:00 CT. Runs positioning-synthesis then wiki-lint.
 
-**On-demand video brief:** manual trigger. Prompt the routine with `"brief me on C2"` (or `"brief today's top pick"`, `"brief this week's top P3 candidate"`, free-text topic) to invoke the `video-brief` skill. Output lands at `/briefs/<date>/<candidate_id>.html` — a single self-contained HTML page with hook, evidence, reference videos, pain vocabulary, brand voice, positioning frame, and a script-outline scaffold. Open in a browser while filming.
+## Local tools
+
+### `video-brief` skill
+
+Local-only skill you run from Claude Code on your own machine — not through the cloud routine. Pulls the research corpus from Connapse via MCP and writes a single-file HTML planning brief to your current working directory.
+
+Invoke with prompts like:
+
+- `"brief me on C2"` — by candidate ID from the most recent daily
+- `"brief today's top pick"` — rank-1 candidate from the latest daily
+- `"brief this week's top"` — highest-weighted across the last 7 days
+- `"brief the top P3 candidate this week"` — pillar-filtered
+- Free-text topic (`"brief a video about token cost"`)
+
+Output: `./briefs/<candidate_id>.html`. Single self-contained page with hook, evidence, reference videos, HN discussions, pain vocabulary, brand voice, don't-say list, positioning frame, pillar-balance context, CTA copy, and a script-outline scaffold. Opens offline in any browser.
+
+Briefs are **personal planning artifacts, not part of the research corpus** — they're not uploaded to the container. Consider adding `briefs/` to `.gitignore`.
 
 ### How to query the corpus from another agent
 
