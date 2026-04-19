@@ -72,8 +72,9 @@ From the observations, generate 8-15 candidate video ideas. For each:
 4. Decide `cloud_compatible` (true unless the hook requires S3/Azure/FS connectors).
 5. Decide `promotion_surface` (hosted | oss | both). Enforce the routing rule from §1.
 6. If `cloud_compatible=False` and `promotion_surface=hosted` → reject or reframe before including.
+7. Assign a **slug ID**: a 2-4-word kebab-case slug derived from the hook's distinctive noun phrase. Examples: `token-diet`, `rag-as-memory`, `file-search-agent`, `skills-stateless`, `mcp-audit`, `context-engineering`. Slugs must be unique within the daily. **Do NOT use sequential C-numbers** — slugs are human-readable and stable across file reorderings, so downstream skills (notably `video-brief`) can reference candidates by a name the human can actually say aloud.
 
-Write `/tmp/run/$RUN_DATE/candidates.md` with a YAML header block per candidate.
+Write `/tmp/run/$RUN_DATE/candidates.md` with a YAML header block per candidate. Header format per candidate: `## <slug> — "<hook>"`. Ranking table at the bottom uses `slug` as the ID column (not C-number).
 
 ## 4. Dedup vs. wiki
 
